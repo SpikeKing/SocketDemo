@@ -6,9 +6,16 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Random;
 
 /**
  * TCP的服务端
@@ -17,6 +24,7 @@ import java.net.Socket;
  */
 public class TCPServerService extends Service {
     private static final String TAG = "DEBUG-WCL: " + TCPServerService.class.getSimpleName();
+
     private boolean mIsServiceDestroyed = false;
     private String[] mDefinedMessages = new String[]{
             "我是Spike, 哈哈, 你们的好朋友!",
@@ -48,23 +56,22 @@ public class TCPServerService extends Service {
             } catch (IOException e) {
                 Log.e(TAG, "建立链接失败, 端口:8644");
                 e.printStackTrace();
+                return; // 链接建立失败直接返回
             }
 
             while (!mIsServiceDestroyed) {
                 try {
-                    if (serverSocket != null) {
-                        final Socket client = serverSocket.accept();
-                        Log.e(TAG, "接收链接");
-                        new Thread() {
-                            @Override public void run() {
-                                try {
-                                    responseClient(client);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+                    final Socket client = serverSocket.accept();
+                    Log.e(TAG, "接收链接");
+                    new Thread() {
+                        @Override public void run() {
+                            try {
+                                responseClient(client);
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                        };
-                    }
+                        }
+                    };
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -73,7 +80,40 @@ public class TCPServerService extends Service {
     }
 
     private void responseClient(Socket client) throws IOException {
+        // 接收客户端消息
+        BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
+        // 向客户端发送消息
+        PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(client.getOutputStream())), true);
+        out.println("欢迎欢迎, 我是Spike!");
+        while (!mIsServiceDestroyed) {
+            String str = in.readLine();
+            Log.e(TAG, "信息来自: " + str);
+            if (str == null) {
+                break;
+            }
+            int i = new Random().nextInt(mDefinedMessages.length);
+            String msg = mDefinedMessages[i];
+            out.print(msg);
+            Log.e(TAG, "发送信息: " + msg);
+        }
+
+        System.out.println("客户端退出");
+
+        // 关闭通信
+        close(out);
+        close(in);
+        client.close();
+    }
+
+    private static void close(Closeable closeable) {
+        try {
+            if (closeable != null) {
+                closeable.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
