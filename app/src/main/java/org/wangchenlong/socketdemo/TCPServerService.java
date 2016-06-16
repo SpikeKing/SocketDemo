@@ -34,6 +34,8 @@ public class TCPServerService extends Service {
             "啊呀呀, 心情不好的时候要编程, 心情好的时候也要编程"
     };
 
+    public static final int PORT = 8688;
+
     @Override public void onCreate() {
         new Thread(new TcpServer()).start();
         super.onCreate();
@@ -52,9 +54,9 @@ public class TCPServerService extends Service {
         @Override public void run() {
             ServerSocket serverSocket = null;
             try {
-                serverSocket = new ServerSocket(8644);
+                serverSocket = new ServerSocket(PORT);
             } catch (IOException e) {
-                Log.e(TAG, "建立链接失败, 端口:8644");
+                Log.e(TAG, "建立链接失败, 端口:" + PORT);
                 e.printStackTrace();
                 return; // 链接建立失败直接返回
             }
@@ -62,7 +64,7 @@ public class TCPServerService extends Service {
             while (!mIsServiceDestroyed) {
                 try {
                     final Socket client = serverSocket.accept();
-                    Log.e(TAG, "接收链接");
+                    Log.e(TAG, "接收数据");
                     new Thread() {
                         @Override public void run() {
                             try {
@@ -71,7 +73,7 @@ public class TCPServerService extends Service {
                                 e.printStackTrace();
                             }
                         }
-                    };
+                    }.start();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -79,6 +81,12 @@ public class TCPServerService extends Service {
         }
     }
 
+    /**
+     * 接收客户端的消息
+     *
+     * @param client 客户端
+     * @throws IOException
+     */
     private void responseClient(Socket client) throws IOException {
         // 接收客户端消息
         BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -94,7 +102,7 @@ public class TCPServerService extends Service {
             }
             int i = new Random().nextInt(mDefinedMessages.length);
             String msg = mDefinedMessages[i];
-            out.print(msg);
+            out.println(msg);
             Log.e(TAG, "发送信息: " + msg);
         }
 
@@ -106,7 +114,7 @@ public class TCPServerService extends Service {
         client.close();
     }
 
-    private static void close(Closeable closeable) {
+    public static void close(Closeable closeable) {
         try {
             if (closeable != null) {
                 closeable.close();

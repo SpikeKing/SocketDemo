@@ -19,7 +19,9 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".TCPServerService"/>
+        <service
+            android:name=".TCPServerService"
+            android:process=":remote"/>
     </application>
 
 </manifest>

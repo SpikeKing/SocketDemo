@@ -19,8 +19,7 @@
         <TextView
             android:id="@+id/main_tv_content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="请输入文字"/>
+            android:layout_height="wrap_content"/>
 
     </android.support.v4.widget.NestedScrollView>
 
@@ -39,6 +38,7 @@
 
         <Button
             android:id="@+id/main_b_send"
+            android:onClick="sendMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:enabled="false"
