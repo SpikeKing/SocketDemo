@@ -34,7 +34,7 @@ public class TCPServerService extends Service {
             "啊呀呀, 心情不好的时候要编程, 心情好的时候也要编程"
     };
 
-    public static final int PORT = 8688;
+    public static final int PORT = 8644;
 
     @Override public void onCreate() {
         new Thread(new TcpServer()).start();
