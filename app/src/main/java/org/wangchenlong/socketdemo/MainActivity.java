@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         mEtMessage = (EditText) findViewById(R.id.main_et_edit_text);
         mBSend = (Button) findViewById(R.id.main_b_send);
 
-        Intent intent = new Intent(this, TCPServerService.class);
+        Intent intent = new Intent(this, ServerService.class);
         startService(intent);
 
         new Thread(new Runnable() {
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         // 不停重试直到连接成功为止
         while (socket == null) {
             try {
-                socket = new Socket("localhost", TCPServerService.PORT);
+                socket = new Socket("localhost", ServerService.PORT);
                 mClientSocket = socket;
                 mPrintWriter = new PrintWriter(new BufferedWriter(
                         new OutputStreamWriter(socket.getOutputStream())), true);
@@ -120,8 +120,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             Log.e(TAG, "退出");
-            TCPServerService.close(mPrintWriter);
-            TCPServerService.close(br);
+            ServerService.close(mPrintWriter);
+            ServerService.close(br);
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();

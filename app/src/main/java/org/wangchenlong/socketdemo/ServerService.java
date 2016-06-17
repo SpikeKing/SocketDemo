@@ -22,8 +22,8 @@ import java.util.Random;
  * <p/>
  * Created by wangchenlong on 16/6/16.
  */
-public class TCPServerService extends Service {
-    private static final String TAG = "DEBUG-WCL: " + TCPServerService.class.getSimpleName();
+public class ServerService extends Service {
+    private static final String TAG = "DEBUG-WCL: " + ServerService.class.getSimpleName();
 
     private boolean mIsServiceDestroyed = false;
     private String[] mDefinedMessages = new String[]{
@@ -89,10 +89,13 @@ public class TCPServerService extends Service {
      */
     private void responseClient(Socket client) throws IOException {
         // 接收客户端消息
-        BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(client.getInputStream()));
 
         // 向客户端发送消息
-        PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(client.getOutputStream())), true);
+        PrintWriter out = new PrintWriter(new BufferedWriter(
+                new OutputStreamWriter(client.getOutputStream())), true);
+
         out.println("欢迎欢迎, 我是Spike!");
         while (!mIsServiceDestroyed) {
             String str = in.readLine();
@@ -100,6 +103,7 @@ public class TCPServerService extends Service {
             if (str == null) {
                 break;
             }
+
             int i = new Random().nextInt(mDefinedMessages.length);
             String msg = mDefinedMessages[i];
             out.println(msg);
@@ -114,6 +118,10 @@ public class TCPServerService extends Service {
         client.close();
     }
 
+    /**
+     * 关闭
+     * @param closeable 关闭
+     */
     public static void close(Closeable closeable) {
         try {
             if (closeable != null) {

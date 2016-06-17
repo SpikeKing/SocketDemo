@@ -20,7 +20,7 @@
         </activity>
 
         <service
-            android:name=".TCPServerService"
+            android:name=".ServerService"
             android:process=":remote"/>
     </application>
 
