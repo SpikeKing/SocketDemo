@@ -1,4 +1,4 @@
-# 使用 Socket 跨进程实时聊天
+# 使用 Socket 处理跨进程的实时聊天
 
 > 欢迎Follow我的GitHub: https://github.com/SpikeKing
 
